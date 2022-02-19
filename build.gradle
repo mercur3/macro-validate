@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 group 'com.gitlab.mercur3'
@@ -12,6 +12,8 @@ repositories {
 java {
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
+    withSourcesJar()
+    withJavadocJar()
 }
 
 dependencies {

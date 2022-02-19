@@ -1,0 +1,4 @@
+* macro-validate
+
+A =Java= library that performs bean validation similar to =javax.validation=, but rather than
+validating at runtime, the annotations used here are evaluated at compile time.

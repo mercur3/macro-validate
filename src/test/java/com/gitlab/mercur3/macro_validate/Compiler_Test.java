@@ -7,9 +7,13 @@ import org.junit.jupiter.api.Test;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
 class Compiler_Test {
-	private static final Compiler compiler = Compiler.javac()
+	private static final Compiler COMPILER = Compiler.javac()
 			.withProcessors(new com.gitlab.mercur3.macro_validate.Compiler());
-	private static final String simpleCorrectTestClass = """
+
+	private static final String ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG =
+			"annotation type not applicable to this kind of declaration";
+
+	private static final String SIMPLE_CORRECT_TEST_CLASS = """
 			package example;
 
 			import com.gitlab.mercur3.macro_validate.constraints.Min;
@@ -21,7 +25,7 @@ class Compiler_Test {
 				public int num;
 			}
 			""";
-	private static final String simpleIncorrectTestClass = """
+	private static final String SIMPLE_INCORRECT_TEST_CLASS = """
 			package example;
 
 			import com.gitlab.mercur3.macro_validate.constraints.Min;
@@ -35,22 +39,22 @@ class Compiler_Test {
 
 	@Test
 	void it_compiles() {
-		var compilation = compiler.compile(JavaFileObjects.forSourceString(
+		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				"example.SimpleCorrectTestClass",
-				simpleCorrectTestClass
+				SIMPLE_CORRECT_TEST_CLASS
 		));
 		assertThat(compilation).succeededWithoutWarnings();
 	}
 
 	@Test
 	void it_does_not_compile() {
-		var compilation = compiler.compile(JavaFileObjects.forSourceString(
+		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				"example.SimpleIncorrectTestClass",
-				simpleIncorrectTestClass
+				SIMPLE_INCORRECT_TEST_CLASS
 		));
+		var compilationResult = assertThat(compilation);
 
-		assertThat(compilation).failed();
-		assertThat(compilation).hadErrorContaining(
-				"annotation type not applicable to this kind of declaration");
+		compilationResult.failed();
+		compilationResult.hadErrorContaining(ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG);
 	}
 }

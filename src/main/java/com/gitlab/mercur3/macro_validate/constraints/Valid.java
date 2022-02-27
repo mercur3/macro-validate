@@ -8,5 +8,5 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 public @interface Valid {}

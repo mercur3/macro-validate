@@ -1,26 +1,26 @@
 plugins {
-    id 'java-library'
+	id 'java-library'
 }
 
 group 'com.gitlab.mercur3'
 version '1.0-SNAPSHOT'
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 java {
-    sourceCompatibility JavaVersion.VERSION_17
-    targetCompatibility JavaVersion.VERSION_17
-    withSourcesJar()
-    withJavadocJar()
+	sourceCompatibility JavaVersion.VERSION_17
+	targetCompatibility JavaVersion.VERSION_17
+	withSourcesJar()
+	withJavadocJar()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 test {
-    useJUnitPlatform()
+	useJUnitPlatform()
 }

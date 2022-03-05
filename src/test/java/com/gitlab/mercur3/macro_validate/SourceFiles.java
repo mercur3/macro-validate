@@ -25,4 +25,16 @@ public class SourceFiles {
 				public int num;
 			}
 			""";
+
+	public static final String CORRECT_RECORD = """
+			package example;
+
+			import com.gitlab.mercur3.macro_validate.constraints.Min;
+			import com.gitlab.mercur3.macro_validate.constraints.Valid;
+
+			record CorrectRecord(
+				@Min(value = 123, message = "Must be >= 123")
+				int num
+			) {}
+			""";
 }

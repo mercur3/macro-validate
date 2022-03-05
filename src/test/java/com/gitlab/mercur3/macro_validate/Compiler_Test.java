@@ -2,6 +2,7 @@ package com.gitlab.mercur3.macro_validate;
 
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.gitlab.mercur3.macro_validate.SourceFiles.*;
@@ -11,14 +12,28 @@ class Compiler_Test {
 	private static final String ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG =
 			"annotation type not applicable to this kind of declaration";
 
-	private static final Compiler COMPILER = Compiler.javac()
-			.withProcessors(new com.gitlab.mercur3.macro_validate.Compiler());
+	private Compiler COMPILER;
+
+	@BeforeEach
+	void init_compiler() {
+		COMPILER = Compiler.javac()
+				.withProcessors(new com.gitlab.mercur3.macro_validate.Compiler());
+	}
 
 	@Test
 	void it_compiles() {
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				"example.SimpleCorrectTestClass",
 				SIMPLE_CORRECT_TEST_CLASS
+		));
+		assertThat(compilation).succeededWithoutWarnings();
+	}
+
+	@Test
+	void record_compiles() {
+		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
+				"example.CorrectRecord",
+				CORRECT_RECORD
 		));
 		assertThat(compilation).succeededWithoutWarnings();
 	}

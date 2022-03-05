@@ -14,10 +14,10 @@ import javax.lang.model.util.Types;
 import java.util.Set;
 
 class ParseTree {
-	private final Element element;
-	private final Logger logger;
-	private final Types typeUtils;
-	private final Tree tree;
+	public final Element element;
+	public final Logger logger;
+	public final Types typeUtils;
+	public final Tree tree;
 
 	public static ParseTree from(Element el, Logger logger, Types typeUtils) {
 		return new ParseTree(el, logger, typeUtils);

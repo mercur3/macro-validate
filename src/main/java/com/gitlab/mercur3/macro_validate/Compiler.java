@@ -49,6 +49,8 @@ class Compiler extends AbstractProcessor {
 			if (result.isErr()) {
 				return true;
 			}
+			SourceCodeGenerator.from(parseTree, filer, elementUtils)
+					.generate();
 		}
 
 		/// FIXME should return =false=

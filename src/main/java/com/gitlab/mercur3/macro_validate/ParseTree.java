@@ -83,7 +83,7 @@ class ParseTree {
 		String msg = min.message();
 		tree.insert(
 				ElementWithAccessor.publicField(el),
-				new Constraint(String.format("< %d", val), msg)
+				new Constraint(String.format(">= %d", val), msg)
 		);
 		return new Ok<>(Empty.UNIT);
 	}

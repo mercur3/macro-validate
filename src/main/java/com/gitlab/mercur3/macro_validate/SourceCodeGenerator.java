@@ -40,6 +40,7 @@ class SourceCodeGenerator {
 				.build();
 
 		var overrideValid = overrideValid();
+		var overrideErrors = overrideErrors();
 
 		var classBuilder = TypeSpec.classBuilder(thisClassName)
 				.addSuperinterface(ParameterizedTypeName.get(
@@ -49,6 +50,7 @@ class SourceCodeGenerator {
 				.addMethod(constructor)
 				.addMethod(initializer)
 				.addMethod(overrideValid)
+				.addMethod(overrideErrors)
 				.addField(targetClassName, ptr, Modifier.PRIVATE, Modifier.FINAL);
 
 
@@ -93,12 +95,12 @@ class SourceCodeGenerator {
 		}
 		else {
 			var iter = entries.iterator();
-			var el = iter.next();
-			display(acc, el);
-			for (el = iter.next(); iter.hasNext(); el = iter.next()) {
+			var first = iter.next();
+			display(acc, first);
+			iter.forEachRemaining(el -> {
 				acc.append(" && ");
 				display(acc, el);
-			}
+			});
 		}
 		overrideValid.addStatement(acc.toString());
 		return overrideValid.build();
@@ -119,5 +121,30 @@ class SourceCodeGenerator {
 			acc.append(" && ");
 			acc.append(constraints.get(i).statement());
 		}
+	}
+
+	private MethodSpec overrideErrors() {
+		var entries = parseTree.tree.nodes.entrySet();
+		var builder = MethodSpec.methodBuilder("errors")
+				.addAnnotation(Override.class)
+				.returns(ParameterizedTypeName.get(ArrayList.class, String.class))
+				.addStatement(String.format(
+						"var errors = new ArrayList<String>(%d)",
+						entries.size())
+				);
+		for (var el : entries) {
+			var accessor = el.getKey().accessor;
+			for (var constraint : el.getValue()) {
+				builder = builder.beginControlFlow(
+						"if (!(ptr$N $N))",
+								accessor,
+								constraint.statement()
+						)
+						.addStatement("errors.add($S)", constraint.errMsg())
+						.endControlFlow();
+			}
+		}
+		return builder.addStatement("return errors")
+				.build();
 	}
 }

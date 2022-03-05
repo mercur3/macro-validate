@@ -9,28 +9,28 @@ public class SourceFiles {
 
 			@Valid
 			class SimpleCorrectTestClass {
-				@Min(value = 123, message = "Must be >= 123")
+				@Min(value = 1, message = "Must be >= 1")
 				public byte num1;
 
-				@Min(value = 456, message = "Must be >= 456")
+				@Min(value = 2, message = "Must be >= 2")
 				public short num2;
 
-				@Min(value = 456, message = "Must be >= 456")
+				@Min(value = 3, message = "Must be >= 3")
 				public int num3;
 
-				@Min(value = 456, message = "Must be >= 456")
+				@Min(value = 4, message = "Must be >= 4")
 				public long num4;
 
-				@Min(value = 456, message = "Must be >= 456")
+				@Min(value = 5, message = "Must be >= 5")
 				public Byte num5;
 
-				@Min(value = 456, message = "Must be >= 456")
+				@Min(value = 6, message = "Must be >= 6")
 				public Short num6;
 
-				@Min(value = 456, message = "Must be >= 456")
+				@Min(value = 7, message = "Must be >= 7")
 				public Integer num7;
 
-				@Min(value = 456, message = "Must be >= 456")
+				@Min(value = 8, message = "Must be >= 8")
 				public Long num8;
 			}
 			""";

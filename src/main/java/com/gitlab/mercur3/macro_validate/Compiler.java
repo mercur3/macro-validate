@@ -49,6 +49,8 @@ class Compiler extends AbstractProcessor {
 			if (result.isErr()) {
 				return true;
 			}
+
+			/// FIXME it might throw an exception when writing to a file
 			SourceCodeGenerator.from(parseTree, filer, elementUtils)
 					.generate();
 		}

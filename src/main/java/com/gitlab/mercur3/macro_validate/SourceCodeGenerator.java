@@ -6,9 +6,9 @@ import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.util.Elements;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Map;
 
 class SourceCodeGenerator {
 	private final ParseTree parseTree;
@@ -23,31 +23,36 @@ class SourceCodeGenerator {
 		var el = parseTree.element;
 		var ptr = "ptr";
 		var elType = el.asType();
-		var classTypeName = ClassName.get(elType);
+		var thisClassName = ClassName.get(generatePackage(el), generateName(el));
+		var targetClassName = ClassName.get(elType);
 
 		var constructor = MethodSpec.constructorBuilder()
 				.addModifiers(Modifier.PRIVATE)
-				.addParameter(classTypeName, ptr)
+				.addParameter(targetClassName, ptr)
 				.addStatement("this.$N = $N", ptr, ptr)
 				.build();
 
 		var initializer = MethodSpec.methodBuilder("of")
-				.returns(classTypeName)
+				.returns(thisClassName)
 				.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-				.addParameter(classTypeName, ptr)
-				.addStatement("return this.$N", ptr)
+				.addParameter(targetClassName, ptr)
+				.addStatement("return new $T($N)", thisClassName, ptr)
 				.build();
 
-		var classSpec = TypeSpec.classBuilder(generateName(el))
+		var overrideValid = overrideValid();
+
+		var classBuilder = TypeSpec.classBuilder(thisClassName)
 				.addSuperinterface(ParameterizedTypeName.get(
 						ClassName.get(Validator.class),
-						classTypeName
+						targetClassName
 				))
 				.addMethod(constructor)
 				.addMethod(initializer)
-				.build();
+				.addMethod(overrideValid)
+				.addField(targetClassName, ptr, Modifier.PRIVATE, Modifier.FINAL);
 
-		var file = JavaFile.builder(generatePackage(el), classSpec)
+
+		var file = JavaFile.builder(generatePackage(el), classBuilder.build())
 				.indent("\t")
 				.build();
 		try {
@@ -74,5 +79,45 @@ class SourceCodeGenerator {
 
 	private String generatePackage(Element el) {
 		return elementUtil.getPackageOf(el).getQualifiedName().toString();
+	}
+
+	private MethodSpec overrideValid() {
+		var overrideValid = MethodSpec.methodBuilder("valid")
+				.addAnnotation(Override.class)
+				.returns(boolean.class);
+
+		StringBuilder acc = new StringBuilder("return ");
+		var entries = parseTree.tree.nodes.entrySet();
+		if (entries.size() == 0) {
+			acc.append("true");
+		}
+		else {
+			var iter = entries.iterator();
+			var el = iter.next();
+			display(acc, el);
+			for (el = iter.next(); iter.hasNext(); el = iter.next()) {
+				acc.append(" && ");
+				display(acc, el);
+			}
+		}
+		overrideValid.addStatement(acc.toString());
+		return overrideValid.build();
+	}
+
+	private void display(
+			StringBuilder acc,
+			Map.Entry<ElementWithAccessor, ArrayList<Constraint>> field
+	) {
+		acc.append("this");
+		acc.append(field.getKey().accessor);
+		acc.append(' ');
+		var constraints = field.getValue();
+		acc.append(constraints.get(0).statement());
+		for (int i = 1; i < constraints.size(); ++i) {
+			acc.append("this");
+			acc.append(field.getKey().accessor);
+			acc.append(" && ");
+			acc.append(constraints.get(i).statement());
+		}
 	}
 }

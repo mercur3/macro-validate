@@ -12,7 +12,7 @@ class ElementWithAccessor {
 	}
 
 	public static ElementWithAccessor publicField(Element el) {
-		return new ElementWithAccessor(el, String.format("this.%s", el.getSimpleName()));
+		return new ElementWithAccessor(el, String.format(".%s", el.getSimpleName()));
 	}
 
 	@Override

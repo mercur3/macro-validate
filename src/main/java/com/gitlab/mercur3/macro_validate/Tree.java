@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 class Tree {
-	private final LinkedHashMap<ElementWithAccessor, ArrayList<Constraint>> nodes;
+	public final LinkedHashMap<ElementWithAccessor, ArrayList<Constraint>> nodes;
 
 	public Tree() {
 		this.nodes = new LinkedHashMap<>();

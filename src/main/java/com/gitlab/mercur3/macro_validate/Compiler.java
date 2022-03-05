@@ -50,12 +50,11 @@ class Compiler extends AbstractProcessor {
 				return true;
 			}
 
-			/// FIXME it might throw an exception when writing to a file
-			SourceCodeGenerator.from(parseTree, filer, elementUtils)
-					.generate();
+			result = SourceCodeGenerator.from(parseTree, filer, elementUtils).generate();
+			if (result.isErr()) {
+				return true;
+			}
 		}
-
-		/// FIXME should return =false=
-		return true;
+		return false;
 	}
 }

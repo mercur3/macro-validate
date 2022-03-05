@@ -1,5 +1,9 @@
 package com.gitlab.mercur3.macro_validate;
 
+import com.gitlab.mercur3.jrusty.result.Empty;
+import com.gitlab.mercur3.jrusty.result.Err;
+import com.gitlab.mercur3.jrusty.result.Ok;
+import com.gitlab.mercur3.jrusty.result.Result;
 import com.squareup.javapoet.*;
 
 import javax.annotation.processing.Filer;
@@ -19,7 +23,7 @@ class SourceCodeGenerator {
 		return new SourceCodeGenerator(tree, writer, utils);
 	}
 
-	public void generate() {
+	public Result<Empty, Empty> generate() {
 		var el = parseTree.element;
 		var ptr = "ptr";
 		var elType = el.asType();
@@ -58,11 +62,13 @@ class SourceCodeGenerator {
 				.indent("\t")
 				.build();
 		try {
-			file.writeTo(System.out);
+			file.writeTo(filer);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
+			return new Err<>(Empty.UNIT);
 		}
+		return new Ok<>(Empty.UNIT);
 	}
 
 
@@ -86,6 +92,7 @@ class SourceCodeGenerator {
 	private MethodSpec overrideValid() {
 		var overrideValid = MethodSpec.methodBuilder("valid")
 				.addAnnotation(Override.class)
+				.addModifiers(Modifier.PUBLIC)
 				.returns(boolean.class);
 
 		StringBuilder acc = new StringBuilder("return ");
@@ -110,13 +117,13 @@ class SourceCodeGenerator {
 			StringBuilder acc,
 			Map.Entry<ElementWithAccessor, ArrayList<Constraint>> field
 	) {
-		acc.append("this");
+		acc.append("this.ptr");
 		acc.append(field.getKey().accessor);
 		acc.append(' ');
 		var constraints = field.getValue();
 		acc.append(constraints.get(0).statement());
 		for (int i = 1; i < constraints.size(); ++i) {
-			acc.append("this");
+			acc.append("this.ptr");
 			acc.append(field.getKey().accessor);
 			acc.append(" && ");
 			acc.append(constraints.get(i).statement());
@@ -128,6 +135,7 @@ class SourceCodeGenerator {
 		var builder = MethodSpec.methodBuilder("errors")
 				.addAnnotation(Override.class)
 				.returns(ParameterizedTypeName.get(ArrayList.class, String.class))
+				.addModifiers(Modifier.PUBLIC)
 				.addStatement(String.format(
 						"var errors = new ArrayList<String>(%d)",
 						entries.size())

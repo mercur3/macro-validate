@@ -13,7 +13,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Types;
 import java.util.Set;
 
-public class ParseTree {
+class ParseTree {
 	private final Element element;
 	private final Logger logger;
 	private final Types typeUtils;
@@ -48,9 +48,11 @@ public class ParseTree {
 	}
 
 	private Result<Empty, Empty> processMin(Element el) {
+		// metadata
 		var supportedElements = Set.of(TypeKind.BYTE, TypeKind.SHORT, TypeKind.INT, TypeKind.LONG);
-		var min = el.getAnnotation(Min.class);
 		var typeMirror = el.asType();
+
+		var min = el.getAnnotation(Min.class);
 		if (min == null) {
 			return new Ok<>(Empty.UNIT);
 		}
@@ -63,6 +65,7 @@ public class ParseTree {
 
 		var kind = typeMirror.getKind();
 		if (!supportedElements.contains(kind)) {
+			// handle the case when it is a wrapper class i.e. =Integer=
 			try {
 				var unboxedType = typeUtils.unboxedType(typeMirror);
 				if (!supportedElements.contains(unboxedType.getKind())) {
@@ -75,6 +78,7 @@ public class ParseTree {
 			}
 		}
 
+		// prepare source code generation
 		long val = min.value();
 		String msg = min.message();
 		tree.insert(

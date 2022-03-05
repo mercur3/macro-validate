@@ -2,6 +2,7 @@ package com.gitlab.mercur3.macro_validate;
 
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +31,7 @@ class Compiler_Test {
 	}
 
 	@Test
+	@Ignore("Not implemented yet, but compiles")
 	void record_compiles() {
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				"example.CorrectRecord",
@@ -48,5 +50,29 @@ class Compiler_Test {
 
 		compilationResult.failed();
 		compilationResult.hadErrorContaining(ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG);
+	}
+
+	@Test
+	void min_does_not_work_on_boolean() {
+		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
+				"example.MinUsageOnBoolean",
+				MIN_USAGE_ON_BOOLEAN
+		));
+		var result = assertThat(compilation);
+
+		result.failed();
+		result.hadErrorContaining("not supported");
+	}
+
+	@Test
+	void min_does_not_work_on_invalid_object() {
+		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
+				"example.MinUsageOnInvalidObject",
+				MIN_USAGE_ON_INVALID_OBJECT
+		));
+		var result = assertThat(compilation);
+
+		result.failed();
+		result.hadErrorContaining("not supported");
 	}
 }

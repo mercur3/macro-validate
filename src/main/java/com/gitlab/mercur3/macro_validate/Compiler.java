@@ -1,6 +1,7 @@
 package com.gitlab.mercur3.macro_validate;
 
 import com.gitlab.mercur3.macro_validate.constraints.Valid;
+import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -9,6 +10,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.Set;
 
+@AutoService(Processor.class)
 class Compiler extends AbstractProcessor {
 	private Types typeUtils;
 	private Elements elementUtils;
@@ -42,7 +44,14 @@ class Compiler extends AbstractProcessor {
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
 		for (var el : env.getElementsAnnotatedWith(Valid.class)) {
 			logger.log("Got element", el);
+			var parseTree = ParseTree.from(el, logger, typeUtils);
+			var result = parseTree.generate();
+			if (result.isErr()) {
+				return true;
+			}
 		}
+
+		/// FIXME should return =false=
 		return true;
 	}
 }

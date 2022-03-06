@@ -57,9 +57,15 @@ class ParseTree {
 			return new Ok<>(Empty.UNIT);
 		}
 
-		var modifiers = el.getModifiers();
-		if (!modifiers.contains(Modifier.PUBLIC)) {
-			logger.error("Only public class members are currently supported", el);
+		String accessor;
+		if (el.getModifiers().contains(Modifier.PUBLIC)) {
+			accessor = ElementWithAccessor.publicField(el);
+		}
+		else if (element.getKind() == ElementKind.RECORD) {
+			accessor = ElementWithAccessor.recordField(el);
+		}
+		else {
+			logger.error("Annotation type not applicable to this kind of declaration. Given field is neither public nor a record component:", el);
 			return new Err<>(Empty.UNIT);
 		}
 
@@ -82,7 +88,7 @@ class ParseTree {
 		long val = min.value();
 		String msg = min.message();
 		tree.insert(
-				ElementWithAccessor.publicField(el),
+				new ElementWithAccessor(el, accessor),
 				new Constraint(String.format(">= %d", val), msg)
 		);
 		return new Ok<>(Empty.UNIT);

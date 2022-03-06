@@ -88,4 +88,39 @@ public class OutputFiles {
 				}
 			}
 			""";
+
+	public static String CORRECT_RECORD = """
+			package example;
+
+			import com.gitlab.mercur3.macro_validate.Validator;
+			import java.lang.Override;
+			import java.lang.String;
+			import java.util.ArrayList;
+
+			class CorrectRecordValidator implements Validator<CorrectRecord> {
+				private final CorrectRecord ptr;
+
+				private CorrectRecordValidator(CorrectRecord ptr) {
+					this.ptr = ptr;
+				}
+
+				public static CorrectRecordValidator of(CorrectRecord ptr) {
+					return new CorrectRecordValidator(ptr);
+				}
+
+				@Override
+				public boolean valid() {
+					return this.ptr.num() >= 123;
+				}
+
+				@Override
+				public ArrayList<String> errors() {
+					var errors = new ArrayList<String>(1);
+					if (!(ptr.num() >= 123)) {
+						errors.add("Must be >= 123");
+					}
+					return errors;
+				}
+			}
+			""";
 }

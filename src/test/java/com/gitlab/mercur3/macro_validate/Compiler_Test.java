@@ -14,7 +14,7 @@ import static com.google.testing.compile.CompilationSubject.assertThat;
 
 class Compiler_Test {
 	private static final String ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG =
-			"annotation type not applicable to this kind of declaration";
+			"Annotation type not applicable to this kind of declaration";
 
 	private Compiler COMPILER;
 
@@ -49,7 +49,6 @@ class Compiler_Test {
 	}
 
 	@Test
-	@Disabled("Not implemented yet")
 	void record_compiles() {
 		var sourceName = "example.CorrectRecord";
 		var outputName = sourceName + "Validator";
@@ -60,17 +59,17 @@ class Compiler_Test {
 		var result = assertThat(compilation);
 
 		result.succeededWithoutWarnings();
-//		result.generatedSourceFile(outputName);
-//
-//		try {
-//			var out = compilation.generatedSourceFile(outputName)
-//					.get()
-//					.getCharContent(false);
-//			System.out.println(out);
-//		}
-//		catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		result.generatedSourceFile(outputName);
+
+		try {
+			var output = compilation.generatedSourceFile(outputName)
+					.get()
+					.getCharContent(false);
+			Assertions.assertTrue(OutputFiles.CORRECT_RECORD.contentEquals(output));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
@@ -82,7 +81,7 @@ class Compiler_Test {
 		var compilationResult = assertThat(compilation);
 
 		compilationResult.failed();
-		compilationResult.hadErrorContaining(ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG);
+		compilationResult.hadErrorContaining(ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG.toLowerCase());
 	}
 
 	@Test

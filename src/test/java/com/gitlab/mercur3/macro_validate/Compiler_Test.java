@@ -2,8 +2,8 @@ package com.gitlab.mercur3.macro_validate;
 
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -49,6 +49,7 @@ class Compiler_Test {
 	}
 
 	@Test
+	@Disabled("Not implemented yet")
 	void record_compiles() {
 		var sourceName = "example.CorrectRecord";
 		var outputName = sourceName + "Validator";
@@ -118,5 +119,29 @@ class Compiler_Test {
 
 		result.failed();
 		result.hadErrorContaining("Min is not a repeatable annotation type");
+	}
+
+	@Test
+	void trivial_beans_are_always_valid() {
+		var sourceName = "example.TrivialValidClass";
+		var outName = sourceName + "Validator";
+		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
+				sourceName,
+				TRIVIAL_VALID_CLASS
+		));
+		var result = assertThat(compilation);
+
+		result.succeededWithoutWarnings();
+		result.generatedSourceFile(outName);
+		try {
+			var output = compilation.generatedSourceFile(outName)
+					.get()
+					.getCharContent(false);
+			Assertions.assertTrue(OutputFiles.TRIVIAL_VALID_CLASS.contentEquals(output));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assertions.fail();
+		}
 	}
 }

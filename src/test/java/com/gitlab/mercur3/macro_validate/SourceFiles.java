@@ -99,4 +99,17 @@ public class SourceFiles {
 				public byte num1;
 			}
 			""";
+
+	public static final String TRIVIAL_VALID_CLASS = """
+			package example;
+
+			import com.gitlab.mercur3.macro_validate.constraints.Min;
+			import com.gitlab.mercur3.macro_validate.constraints.Valid;
+
+			@Valid
+			class TrivialValidClass {
+				public int num;
+				public String str;
+			}
+			""";
 }

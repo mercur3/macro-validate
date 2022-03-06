@@ -56,4 +56,36 @@ public class OutputFiles {
 				}
 			}
 			""";
+
+	public static String TRIVIAL_VALID_CLASS = """
+			package example;
+
+			import com.gitlab.mercur3.macro_validate.Validator;
+			import java.lang.Override;
+			import java.lang.String;
+			import java.util.ArrayList;
+
+			class TrivialValidClassValidator implements Validator<TrivialValidClass> {
+				private final TrivialValidClass ptr;
+
+				private TrivialValidClassValidator(TrivialValidClass ptr) {
+					this.ptr = ptr;
+				}
+
+				public static TrivialValidClassValidator of(TrivialValidClass ptr) {
+					return new TrivialValidClassValidator(ptr);
+				}
+
+				@Override
+				public boolean valid() {
+					return true;
+				}
+
+				@Override
+				public ArrayList<String> errors() {
+					var errors = new ArrayList<String>(0);
+					return errors;
+				}
+			}
+			""";
 }

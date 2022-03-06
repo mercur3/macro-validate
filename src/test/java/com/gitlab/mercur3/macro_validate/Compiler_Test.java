@@ -93,4 +93,16 @@ class Compiler_Test {
 		result.failed();
 		result.hadErrorContaining("not supported");
 	}
+
+	@Test
+	void repeated_annotations_are_not_allowed() {
+		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
+				"example.RepeatedAnnotation",
+				REPEATED_ANNOTATION
+		));
+		var result = assertThat(compilation);
+
+		result.failed();
+		result.hadErrorContaining("Min is not a repeatable annotation type");
+	}
 }

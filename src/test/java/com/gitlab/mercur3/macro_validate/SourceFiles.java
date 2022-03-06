@@ -84,4 +84,18 @@ public class SourceFiles {
 				public String str;
 			}
 			""";
+
+	public static final String REPEATED_ANNOTATION = """
+			package example;
+
+			import com.gitlab.mercur3.macro_validate.constraints.Min;
+			import com.gitlab.mercur3.macro_validate.constraints.Valid;
+
+			@Valid
+			class RepeatedAnnotation {
+				@Min(value = 1, message = "Must be >= 1")
+				@Min(value = 2, message = "Must be >= 2")
+				public byte num1;
+			}
+			""";
 }

@@ -53,6 +53,7 @@ public class SourceFiles {
 			import com.gitlab.mercur3.macro_validate.constraints.Min;
 			import com.gitlab.mercur3.macro_validate.constraints.Valid;
 
+			@Valid
 			record CorrectRecord(
 				@Min(value = 123, message = "Must be >= 123")
 				int num

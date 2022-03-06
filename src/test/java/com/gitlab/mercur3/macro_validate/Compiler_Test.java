@@ -49,13 +49,27 @@ class Compiler_Test {
 	}
 
 	@Test
-	@Ignore("Not implemented yet, but compiles")
 	void record_compiles() {
+		var sourceName = "example.CorrectRecord";
+		var outputName = sourceName + "Validator";
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
-				"example.CorrectRecord",
+				sourceName,
 				CORRECT_RECORD
 		));
-		assertThat(compilation).succeededWithoutWarnings();
+		var result = assertThat(compilation);
+
+		result.succeededWithoutWarnings();
+//		result.generatedSourceFile(outputName);
+//
+//		try {
+//			var out = compilation.generatedSourceFile(outputName)
+//					.get()
+//					.getCharContent(false);
+//			System.out.println(out);
+//		}
+//		catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	@Test

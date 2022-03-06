@@ -43,7 +43,7 @@ class Compiler extends AbstractProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
 		for (var el : env.getElementsAnnotatedWith(Valid.class)) {
-			logger.log("Got element", el);
+			logger.log("Processing annotations for element:", el);
 			var parseTree = ParseTree.from(el, logger, typeUtils);
 			var result = parseTree.generate();
 			if (result.isErr()) {

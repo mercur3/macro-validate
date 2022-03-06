@@ -5,25 +5,10 @@ import java.util.ArrayList;
 /**
  * Bean validator.
  * <p>
- * If the bean is annotated with {@code @Valid}, no implementation is necessary since it will provided
- * at compile by the annotation processor. Each implementation will follow these pattern:
+ * If the bean is annotated with {@code @Valid}, no implementation is necessary since it will
+ * provided at compile by the annotation processor. Each implementation will follow the pattern
+ * described at {@link com.gitlab.mercur3.macro_validate.constraints.Valid}.
  * </p>
- * <pre>
- *     public final class BeanNameValidator implements Validator&lt;BeanName&gt; {
- *         private final BeanName ptr;
- *
- *         private BeanNameValidator(BeanName ptr) {
- *             this.ptr = ptr;
- *         }
- *
- *         public static BeanNameValidator of(BeanName ptr) {
- *             return new BeanNameValidator(ptr);
- *         }
- *
- *         // Implementation of Validator methods
- *
- *     }
- * </pre>
  *
  * @param <T> the bean type
  */

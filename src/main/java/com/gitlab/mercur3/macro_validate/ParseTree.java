@@ -71,7 +71,7 @@ class ParseTree {
 
 		var kind = typeMirror.getKind();
 		if (!supportedElements.contains(kind)) {
-			// handle the case when it is a wrapper class i.e. =Integer=
+			// handle the case when it is a wrapper class e.g. =Integer=
 			try {
 				var unboxedType = typeUtils.unboxedType(typeMirror);
 				if (!supportedElements.contains(unboxedType.getKind())) {

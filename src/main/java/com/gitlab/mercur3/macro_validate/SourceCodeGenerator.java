@@ -6,21 +6,18 @@ import com.gitlab.mercur3.jrusty.result.Ok;
 import com.gitlab.mercur3.jrusty.result.Result;
 import com.squareup.javapoet.*;
 
-import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.util.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
 class SourceCodeGenerator {
 	private final ParseTree parseTree;
-	private final Filer filer;
-	private final Elements elementUtil;
+	private final MetaUtils utils;
 
-	public static SourceCodeGenerator from(ParseTree tree, Filer writer, Elements utils) {
-		return new SourceCodeGenerator(tree, writer, utils);
+	public static SourceCodeGenerator from(ParseTree tree, MetaUtils utils) {
+		return new SourceCodeGenerator(tree, utils);
 	}
 
 	public Result<Empty, Empty> generate() {
@@ -62,7 +59,7 @@ class SourceCodeGenerator {
 				.indent("\t")
 				.build();
 		try {
-			file.writeTo(filer);
+			file.writeTo(utils.filer());
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -75,10 +72,9 @@ class SourceCodeGenerator {
 	/// PRIVATE
 
 
-	private SourceCodeGenerator(ParseTree parseTree, Filer filer, Elements elementUtil) {
+	private SourceCodeGenerator(ParseTree parseTree, MetaUtils utils) {
 		this.parseTree = parseTree;
-		this.filer = filer;
-		this.elementUtil = elementUtil;
+		this.utils = utils;
 	}
 
 	private String generateName(Element el) {
@@ -86,7 +82,10 @@ class SourceCodeGenerator {
 	}
 
 	private String generatePackage(Element el) {
-		return elementUtil.getPackageOf(el).getQualifiedName().toString();
+		return utils.elementUtils()
+				.getPackageOf(el)
+				.getQualifiedName()
+				.toString();
 	}
 
 	private MethodSpec overrideValid() {
@@ -104,10 +103,11 @@ class SourceCodeGenerator {
 			var iter = entries.iterator();
 			var first = iter.next();
 			display(acc, first);
-			iter.forEachRemaining(el -> {
+			while (iter.hasNext()) {
+				var el = iter.next();
 				acc.append(" && ");
 				display(acc, el);
-			});
+			}
 		}
 		overrideValid.addStatement(acc.toString());
 		return overrideValid.build();
@@ -123,9 +123,10 @@ class SourceCodeGenerator {
 		var constraints = field.getValue();
 		acc.append(constraints.get(0).statement());
 		for (int i = 1; i < constraints.size(); ++i) {
+			acc.append(" && ");
 			acc.append("this.ptr");
 			acc.append(field.getKey().accessor);
-			acc.append(" && ");
+			acc.append(' ');
 			acc.append(constraints.get(i).statement());
 		}
 	}

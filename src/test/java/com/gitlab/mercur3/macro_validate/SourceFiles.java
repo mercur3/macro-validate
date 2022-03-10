@@ -51,12 +51,17 @@ public class SourceFiles {
 			package example;
 
 			import com.gitlab.mercur3.macro_validate.constraints.Min;
+			import com.gitlab.mercur3.macro_validate.constraints.Max;
 			import com.gitlab.mercur3.macro_validate.constraints.Valid;
 
 			@Valid
 			record CorrectRecord(
-				@Min(value = 123, message = "Must be >= 123")
-				int num
+				@Min(value = 100, message = "Must be >= 100")
+				int num1,
+
+				@Min(value = 100, message = "Must be >= 100")
+				@Max(value = 0, message = "Must be <= 0")
+				int num2
 			) {}
 			""";
 

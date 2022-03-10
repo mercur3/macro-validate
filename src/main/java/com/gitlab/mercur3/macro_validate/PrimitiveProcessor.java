@@ -10,7 +10,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 abstract sealed class PrimitiveProcessor implements Processor
-	permits MinProcessor
+	permits MinProcessor, MaxProcessor
 {
 	private static final Set<TypeKind> SUPPORTED_TYPES = Set.of(
 			TypeKind.BYTE,
@@ -23,7 +23,7 @@ abstract sealed class PrimitiveProcessor implements Processor
 
 	public abstract Class<? extends Annotation> getKind();
 
-	public abstract void addToTree(Element el, Tree parseTree, String acessor);
+	public abstract void addToTree(Element el, Tree parseTree, String accessor);
 
 	@Override
 	public Set<TypeKind> supportedTypes() {
@@ -81,7 +81,7 @@ abstract sealed class PrimitiveProcessor implements Processor
 		return new Ok<>(accessor);
 	}
 
-	private Result<String, ErrorKind> isUsedCorrectly(Element el, MetaUtils utils) {
+	Result<String, ErrorKind> isUsedCorrectly(Element el, MetaUtils utils) {
 		return genericIsUsedCorrectly(el, utils);
 	}
 }

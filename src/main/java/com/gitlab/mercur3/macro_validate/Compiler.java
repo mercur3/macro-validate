@@ -53,7 +53,7 @@ class Compiler extends AbstractProcessor {
 				return true;
 			}
 
-			var generateResult = SourceCodeGenerator.from(parseTree, filer, elementUtils)
+			var generateResult = SourceCodeGenerator.from(parseTree, utils)
 					.generate();
 			if (generateResult.isErr()) {
 				return true;

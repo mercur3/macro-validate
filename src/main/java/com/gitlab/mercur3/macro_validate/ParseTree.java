@@ -12,7 +12,7 @@ class ParseTree {
 	public final Element element;
 	public final Tree tree;
 	public final MetaUtils utils;
-	private static final Processor processors[] = {new MinProcessor(), };
+	private static final Processor processors[] = {new MinProcessor(), new MaxProcessor()};
 
 	public static ParseTree from(Element el, MetaUtils utils) {
 		return new ParseTree(el, utils);

@@ -110,14 +110,20 @@ public class OutputFiles {
 
 				@Override
 				public boolean valid() {
-					return this.ptr.num() >= 123;
+					return this.ptr.num1() >= 100 && this.ptr.num2() >= 100 && this.ptr.num2() <= 0;
 				}
 
 				@Override
 				public ArrayList<String> errors() {
-					var errors = new ArrayList<String>(1);
-					if (!(ptr.num() >= 123)) {
-						errors.add("Must be >= 123");
+					var errors = new ArrayList<String>(2);
+					if (!(ptr.num1() >= 100)) {
+						errors.add("Must be >= 100");
+					}
+					if (!(ptr.num2() >= 100)) {
+						errors.add("Must be >= 100");
+					}
+					if (!(ptr.num2() <= 0)) {
+						errors.add("Must be <= 0");
 					}
 					return errors;
 				}

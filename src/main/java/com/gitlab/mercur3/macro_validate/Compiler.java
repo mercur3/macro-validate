@@ -12,10 +12,7 @@ import java.util.Set;
 
 @AutoService(Processor.class)
 class Compiler extends AbstractProcessor {
-	private Types typeUtils;
-	private Elements elementUtils;
-	private Filer filer;
-	private Logger logger;
+	private MetaUtils utils;
 
 	public Compiler() {
 		super();
@@ -34,24 +31,31 @@ class Compiler extends AbstractProcessor {
 	@Override
 	public synchronized void init(ProcessingEnvironment env) {
 		super.init(env);
-		this.typeUtils = env.getTypeUtils();
-		this.elementUtils = env.getElementUtils();
-		this.filer = env.getFiler();
-		this.logger = Logger.from(env.getMessager());
+		this.utils = new MetaUtils(
+				env.getTypeUtils(),
+				env.getElementUtils(),
+				env.getFiler(),
+				Logger.from(env.getMessager())
+		);
 	}
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
+		var logger = utils.logger();
+		var filer = utils.filer();
+		var elementUtils = utils.elementUtils();
+
 		for (var el : env.getElementsAnnotatedWith(Valid.class)) {
 			logger.log("Processing annotations for element:", el);
-			var parseTree = ParseTree.from(el, logger, typeUtils);
-			var result = parseTree.generate();
-			if (result.isErr()) {
+			var parseTree = ParseTree.from(el, utils);
+			var parseResult = parseTree.generate();
+			if (parseResult.isErr()) {
 				return true;
 			}
 
-			result = SourceCodeGenerator.from(parseTree, filer, elementUtils).generate();
-			if (result.isErr()) {
+			var generateResult = SourceCodeGenerator.from(parseTree, filer, elementUtils)
+					.generate();
+			if (generateResult.isErr()) {
 				return true;
 			}
 		}

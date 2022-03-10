@@ -1,37 +1,34 @@
 package com.gitlab.mercur3.macro_validate;
 
 import com.gitlab.mercur3.jrusty.result.Empty;
-import com.gitlab.mercur3.jrusty.result.Err;
+import com.gitlab.mercur3.jrusty.result.ErrorKind;
 import com.gitlab.mercur3.jrusty.result.Ok;
 import com.gitlab.mercur3.jrusty.result.Result;
-import com.gitlab.mercur3.macro_validate.constraints.Min;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.util.Types;
-import java.util.Set;
 
 class ParseTree {
 	public final Element element;
-	public final Logger logger;
-	public final Types typeUtils;
 	public final Tree tree;
+	public final MetaUtils utils;
+	private static final Processor processors[] = {new MinProcessor(), };
 
-	public static ParseTree from(Element el, Logger logger, Types typeUtils) {
-		return new ParseTree(el, logger, typeUtils);
+	public static ParseTree from(Element el, MetaUtils utils) {
+		return new ParseTree(el, utils);
 	}
 
-	public Result<Empty, Empty> generate() {
+	public Result<Empty, ErrorKind> generate() {
 		var classMembers = element.getEnclosedElements()
 				.stream()
 				.filter(el -> el.getKind() == ElementKind.FIELD)
 				.toList();
 		for (var el : classMembers) {
-			var resMin = processMin(el);
-			if (resMin.isErr()) {
-				return resMin;
+			for (var processor : processors) {
+				var res = processor.process(tree, el, utils);
+				if (res.isErr() && res.err().get() != ErrorKind.NOT_FOUND) {
+					return res;
+				}
 			}
 		}
 
@@ -40,57 +37,9 @@ class ParseTree {
 
 	/// PRIVATE
 
-	private ParseTree(Element element, Logger logger, Types typeUtils) {
+	private ParseTree(Element element, MetaUtils utils) {
 		this.element = element;
-		this.logger = logger;
-		this.typeUtils = typeUtils;
+		this.utils = utils;
 		this.tree = new Tree();
-	}
-
-	private Result<Empty, Empty> processMin(Element el) {
-		// metadata
-		var supportedElements = Set.of(TypeKind.BYTE, TypeKind.SHORT, TypeKind.INT, TypeKind.LONG);
-		var typeMirror = el.asType();
-
-		var min = el.getAnnotation(Min.class);
-		if (min == null) {
-			return new Ok<>(Empty.UNIT);
-		}
-
-		String accessor;
-		if (el.getModifiers().contains(Modifier.PUBLIC)) {
-			accessor = ElementWithAccessor.publicField(el);
-		}
-		else if (element.getKind() == ElementKind.RECORD) {
-			accessor = ElementWithAccessor.recordField(el);
-		}
-		else {
-			logger.error("Annotation type not applicable to this kind of declaration. Given field is neither public nor a record component:", el);
-			return new Err<>(Empty.UNIT);
-		}
-
-		var kind = typeMirror.getKind();
-		if (!supportedElements.contains(kind)) {
-			// handle the case when it is a wrapper class e.g. =Integer=
-			try {
-				var unboxedType = typeUtils.unboxedType(typeMirror);
-				if (!supportedElements.contains(unboxedType.getKind())) {
-					return new Err<>(Empty.UNIT);
-				}
-			}
-			catch (IllegalArgumentException ex) {
-				logger.error(String.format("Type %s is not supported", typeMirror), el);
-				return new Err<>(Empty.UNIT);
-			}
-		}
-
-		// prepare source code generation
-		long val = min.value();
-		String msg = min.message();
-		tree.insert(
-				new ElementWithAccessor(el, accessor),
-				new Constraint(String.format(">= %d", val), msg)
-		);
-		return new Ok<>(Empty.UNIT);
 	}
 }

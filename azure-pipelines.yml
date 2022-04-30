@@ -11,6 +11,11 @@ stages:
         steps:
           - bash: |
               ./gradlew test
+          - task: UseDotNet@2
+            displayName: "Use .NET Core sdk"
+            inputs:
+              version: 6.0.x
+              includePreviewVersions: true
           - task: PublishCodeCoverageResults@1
             displayName: "Code coverage"
             inputs:

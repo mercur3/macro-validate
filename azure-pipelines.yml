@@ -9,11 +9,11 @@ stages:
   - stage: Test
     jobs:
       - job: test_ubuntu
-        displayName: "Test on Ubuntu"
+        displayName: Eclipse Temurin
         container: eclipse-temurin:17-jdk-focal
         steps:
           - bash: |
-              ./gradlew test
+              ./mvnw test -T $(nproc)
           - task: UseDotNet@2
             displayName: "Use .NET Core sdk"
             inputs:
@@ -23,7 +23,14 @@ stages:
             displayName: "Code coverage"
             inputs:
               codeCoverageTool: "JaCoCo"
-              summaryFileLocation: $(System.DefaultWorkingDirectory)/build/reports/jacoco/test/jacocoTestReport.xml
-              reportDirectory: $(System.DefaultWorkingDirectory)/build/reports/jacoco/test/html
+              summaryFileLocation: $(System.DefaultWorkingDirectory)/target/site/jacoco/jacoco.xml
+              reportDirectory: $(System.DefaultWorkingDirectory)/target/site/jacoco
               #additionalCodeCoverageFiles: # Optional
               failIfCoverageEmpty: true
+      - job: amazon_corretto_17
+        displayName: Amazon Corretto
+        steps:
+          - bash: |
+              sed "s/__version__/amazoncorretto:17/" -i Dockerfile.amazoncorretto
+              docker build -t project -f Dockerfile.amazoncorretto .
+              docker run project bash -c "cd /opt/project && ./mvnw test -T $(nproc)"

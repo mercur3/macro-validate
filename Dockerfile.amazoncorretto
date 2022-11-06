@@ -1,0 +1,2 @@
+FROM __version__
+ADD . /opt/project

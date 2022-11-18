@@ -1,5 +1,10 @@
 trigger:
   - master
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - master
 pool:
   vmImage: ubuntu-latest
 variables:
@@ -16,11 +21,13 @@ stages:
               ./mvnw test -T $(nproc)
           - task: UseDotNet@2
             displayName: "Use .NET Core sdk"
+            condition: not(eq(variables['Build.Reason'], 'PullRequest'))
             inputs:
               version: 6.0.x
               includePreviewVersions: true
           - task: PublishCodeCoverageResults@1
             displayName: "Code coverage"
+            condition: not(eq(variables['Build.Reason'], 'PullRequest'))
             inputs:
               codeCoverageTool: "JaCoCo"
               summaryFileLocation: $(System.DefaultWorkingDirectory)/target/site/jacoco/jacoco.xml

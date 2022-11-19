@@ -17,8 +17,8 @@ stages:
         displayName: Eclipse Temurin
         container: eclipse-temurin:17-jdk-focal
         steps:
-          - bash: |
-              ./mvnw test -T $(nproc)
+          - script: ./mvnw test -T $(nproc)
+            displayName: ./mvnw test -T $(nproc)
           - task: UseDotNet@2
             displayName: "Use .NET Core sdk"
             condition: not(eq(variables['Build.Reason'], 'PullRequest'))
@@ -37,7 +37,10 @@ stages:
       - job: amazon_corretto_17
         displayName: Amazon Corretto
         steps:
-          - bash: |
+          - script: |
               sed "s/__version__/amazoncorretto:17/" -i Dockerfile.amazoncorretto
               docker build -t project -f Dockerfile.amazoncorretto .
-              docker run project bash -c "cd /opt/project && ./mvnw test -T $(nproc)"
+            displayName: Build custom amazoncorreto image for Azure Pipelines
+          - script: docker run project bash -c "cd /opt/project && ./mvnw test -T $(nproc)"
+            displayName: docker run project bash -c "cd /opt/project && ./mvnw test -T $(nproc)"
+

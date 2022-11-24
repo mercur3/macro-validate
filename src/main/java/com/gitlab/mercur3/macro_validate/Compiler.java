@@ -42,21 +42,26 @@ class Compiler extends AbstractProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
 		var logger = utils.logger();
-		var filer = utils.filer();
-		var elementUtils = utils.elementUtils();
 
 		for (var el : env.getElementsAnnotatedWith(Valid.class)) {
 			logger.log("Processing annotations for element:", el);
+
 			var parseTree = ParseTree.from(el, utils);
 			var parseResult = parseTree.generate();
 			if (parseResult.isErr()) {
+				logger.error("Compilation failed on element:", el);
 				return true;
 			}
 
-			var generateResult = SourceCodeGenerator.from(parseTree, utils)
+			var generateResult = SourceCodeGenerator
+					.from(parseTree, utils)
 					.generate();
 			if (generateResult.isErr()) {
+				logger.error("Compilation failed on element:", el);
 				return true;
+			}
+			else {
+				logger.log("Compilation succeed:", el);
 			}
 		}
 		return false;

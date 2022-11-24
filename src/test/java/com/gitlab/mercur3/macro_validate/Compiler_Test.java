@@ -3,13 +3,11 @@ package com.gitlab.mercur3.macro_validate;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 
-import static com.gitlab.mercur3.macro_validate.SourceFiles.*;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
 class Compiler_Test {
@@ -22,41 +20,38 @@ class Compiler_Test {
 
 	@BeforeEach
 	void init_compiler() {
-		COMPILER = Compiler.javac()
+		COMPILER = Compiler
+				.javac()
 				.withProcessors(new com.gitlab.mercur3.macro_validate.Compiler());
 	}
 
 	@Test
-	void it_compiles() {
+	void it_compiles() throws IOException {
 		var sourceName = "example.SimpleCorrectTestClass";
 		var outName = sourceName + "Validator";
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				sourceName,
-				SIMPLE_CORRECT_TEST_CLASS
+				SourceFiles.SIMPLE_CORRECT_TEST_CLASS
 		));
 		var result = assertThat(compilation);
 
 		result.succeededWithoutWarnings();
 		result.generatedSourceFile(outName);
-		try {
-			var output = compilation.generatedSourceFile(outName)
-					.get()
-					.getCharContent(false);
-			Assertions.assertTrue(OutputFiles.SIMPLE_CORRECT_TEST_CLASS.contentEquals(output));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			Assertions.fail();
-		}
+
+		var output = compilation
+				.generatedSourceFile(outName)
+				.get()
+				.getCharContent(false);
+		Assertions.assertTrue(OutputFiles.SIMPLE_CORRECT_TEST_CLASS.contentEquals(output));
 	}
 
 	@Test
-	void record_compiles() {
+	void record_compiles() throws IOException {
 		var sourceName = "example.CorrectRecord";
 		var outputName = sourceName + "Validator";
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				sourceName,
-				CORRECT_RECORD
+				SourceFiles.CORRECT_RECORD
 		));
 		var result = assertThat(compilation);
 
@@ -64,22 +59,18 @@ class Compiler_Test {
 		result.hadWarningContaining(USAGE_OF_MIN_MAX);
 		result.generatedSourceFile(outputName);
 
-		try {
-			var output = compilation.generatedSourceFile(outputName)
-					.get()
-					.getCharContent(false);
-			Assertions.assertTrue(OutputFiles.CORRECT_RECORD.contentEquals(output));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		var output = compilation
+				.generatedSourceFile(outputName)
+				.get()
+				.getCharContent(false);
+		Assertions.assertTrue(OutputFiles.CORRECT_RECORD.contentEquals(output));
 	}
 
 	@Test
 	void it_does_not_compile() {
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				"example.SimpleIncorrectTestClass",
-				SIMPLE_INCORRECT_TEST_CLASS
+				SourceFiles.SIMPLE_INCORRECT_TEST_CLASS
 		));
 		var compilationResult = assertThat(compilation);
 
@@ -91,7 +82,7 @@ class Compiler_Test {
 	void min_does_not_work_on_boolean() {
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				"example.MinUsageOnBoolean",
-				MIN_USAGE_ON_BOOLEAN
+				SourceFiles.MIN_USAGE_ON_BOOLEAN
 		));
 		var result = assertThat(compilation);
 
@@ -103,7 +94,7 @@ class Compiler_Test {
 	void min_does_not_work_on_invalid_object() {
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				"example.MinUsageOnInvalidObject",
-				MIN_USAGE_ON_INVALID_OBJECT
+				SourceFiles.MIN_USAGE_ON_INVALID_OBJECT
 		));
 		var result = assertThat(compilation);
 
@@ -115,7 +106,7 @@ class Compiler_Test {
 	void repeated_annotations_are_not_allowed() {
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				"example.RepeatedAnnotation",
-				REPEATED_ANNOTATION
+				SourceFiles.REPEATED_ANNOTATION
 		));
 		var result = assertThat(compilation);
 
@@ -124,26 +115,22 @@ class Compiler_Test {
 	}
 
 	@Test
-	void trivial_beans_are_always_valid() {
+	void trivial_beans_are_always_valid() throws IOException {
 		var sourceName = "example.TrivialValidClass";
 		var outName = sourceName + "Validator";
 		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
 				sourceName,
-				TRIVIAL_VALID_CLASS
+				SourceFiles.TRIVIAL_VALID_CLASS
 		));
 		var result = assertThat(compilation);
 
 		result.succeededWithoutWarnings();
 		result.generatedSourceFile(outName);
-		try {
-			var output = compilation.generatedSourceFile(outName)
-					.get()
-					.getCharContent(false);
-			Assertions.assertTrue(OutputFiles.TRIVIAL_VALID_CLASS.contentEquals(output));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			Assertions.fail();
-		}
+
+		var output = compilation
+				.generatedSourceFile(outName)
+				.get()
+				.getCharContent(false);
+		Assertions.assertTrue(OutputFiles.TRIVIAL_VALID_CLASS.contentEquals(output));
 	}
 }

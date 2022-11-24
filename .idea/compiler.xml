@@ -9,6 +9,10 @@
         <module name="macro-validate" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="17" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="macro-validate" options="" />
+    </option>
   </component>
 </project>

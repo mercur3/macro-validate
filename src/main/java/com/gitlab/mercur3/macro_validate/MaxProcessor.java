@@ -32,13 +32,16 @@ final class MaxProcessor extends PrimitiveProcessor {
 			var minVal = min.value();
 			var maxVal = el.getAnnotation(MAX_CLASS).value();
 			if (minVal > maxVal) {
-				utils.logger().warning(
-						String.format("Usage of Min.class in combination with Max.class. min: %d, max: %d",
-								minVal,
-								maxVal
-						),
-						el
-				);
+				utils
+						.logger()
+						.warning(
+								String.format(
+										"Usage of Min.class in combination with Max.class. min: %d, max: %d",
+										minVal,
+										maxVal
+								),
+								el
+						);
 			}
 		}
 		return res;

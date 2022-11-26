@@ -3,6 +3,8 @@ package com.gitlab.mercur3.macro_validate;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -10,6 +12,7 @@ import java.io.IOException;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class Compiler_Test {
 	private static final String ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG =
 			"Annotation type not applicable to this kind of declaration";

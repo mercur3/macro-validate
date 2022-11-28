@@ -1,16 +1,19 @@
 package com.gitlab.mercur3.macro_validate;
 
+import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class Compiler_Test {
@@ -18,8 +21,27 @@ class Compiler_Test {
 			"Annotation type not applicable to this kind of declaration";
 	private static final String USAGE_OF_MIN_MAX =
 			"Usage of Min.class in combination with Max.class.";
+	private static final Path BASE_PATH = Path.of("src/test/java/com/gitlab/mercur3/macro_validate");
 
 	private Compiler COMPILER;
+
+	private Compilation compile(String sourceQualifiedName, String simpleClassName)
+	throws
+			IOException
+	{
+		var path = Path.of(BASE_PATH.toString(), "src/" + simpleClassName + ".java.txt");
+		var content = Files.readString(path);
+
+		return COMPILER.compile(JavaFileObjects.forSourceString(sourceQualifiedName, content));
+	}
+
+	private String outputFileContent(String simpleClassName) throws IOException {
+		var path = Path.of(
+				BASE_PATH.toString(),
+				"out/" + simpleClassName + "Validator.java.txt"
+		);
+		return Files.readString(path);
+	}
 
 	@BeforeEach
 	void init_compiler() {
@@ -30,12 +52,11 @@ class Compiler_Test {
 
 	@Test
 	void it_compiles() throws IOException {
-		var sourceName = "example.SimpleCorrectTestClass";
-		var outName = sourceName + "Validator";
-		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
-				sourceName,
-				SourceFiles.SIMPLE_CORRECT_TEST_CLASS
-		));
+		var className = "SimpleCorrectTestClass";
+		var sourceQualifiedName = "example." + className;
+		var outName = sourceQualifiedName + "Validator";
+
+		var compilation = compile(sourceQualifiedName, className);
 		var result = assertThat(compilation);
 
 		result.succeededWithoutWarnings();
@@ -45,17 +66,16 @@ class Compiler_Test {
 				.generatedSourceFile(outName)
 				.get()
 				.getCharContent(false);
-		Assertions.assertTrue(OutputFiles.SIMPLE_CORRECT_TEST_CLASS.contentEquals(output));
+		assertEquals(outputFileContent(className), output);
 	}
 
 	@Test
 	void record_compiles() throws IOException {
-		var sourceName = "example.CorrectRecord";
-		var outputName = sourceName + "Validator";
-		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
-				sourceName,
-				SourceFiles.CORRECT_RECORD
-		));
+		var className = "CorrectRecord";
+		var sourceQualifiedName = "example." + className;
+		var outputName = sourceQualifiedName + "Validator";
+
+		var compilation = compile(sourceQualifiedName, className);
 		var result = assertThat(compilation);
 
 		result.succeeded();
@@ -66,27 +86,27 @@ class Compiler_Test {
 				.generatedSourceFile(outputName)
 				.get()
 				.getCharContent(false);
-		Assertions.assertTrue(OutputFiles.CORRECT_RECORD.contentEquals(output));
+		assertEquals(outputFileContent(className), output);
 	}
 
 	@Test
-	void it_does_not_compile() {
-		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
-				"example.SimpleIncorrectTestClass",
-				SourceFiles.SIMPLE_INCORRECT_TEST_CLASS
-		));
-		var compilationResult = assertThat(compilation);
+	void it_does_not_compile() throws IOException {
+		var className = "SimpleIncorrectTestClass";
+		var sourceQualifiedName = "example." + className;
 
-		compilationResult.failed();
-		compilationResult.hadErrorContaining(ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG.toLowerCase());
+		var compilation = compile(sourceQualifiedName, className);
+		var result = assertThat(compilation);
+
+		result.failed();
+		result.hadErrorContaining(ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG.toLowerCase());
 	}
 
 	@Test
-	void min_does_not_work_on_boolean() {
-		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
-				"example.MinUsageOnBoolean",
-				SourceFiles.MIN_USAGE_ON_BOOLEAN
-		));
+	void min_does_not_work_on_boolean() throws IOException {
+		var className = "MinUsageOnBoolean";
+		var sourceQualifiedName = "example." + className;
+
+		var compilation = compile(sourceQualifiedName, className);
 		var result = assertThat(compilation);
 
 		result.failed();
@@ -94,11 +114,11 @@ class Compiler_Test {
 	}
 
 	@Test
-	void min_does_not_work_on_invalid_object() {
-		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
-				"example.MinUsageOnInvalidObject",
-				SourceFiles.MIN_USAGE_ON_INVALID_OBJECT
-		));
+	void min_does_not_work_on_invalid_object() throws IOException {
+		var className = "MinUsageOnInvalidObject";
+		var sourceQualifiedName = "example." + className;
+
+		var compilation = compile(sourceQualifiedName, className);
 		var result = assertThat(compilation);
 
 		result.failed();
@@ -106,11 +126,11 @@ class Compiler_Test {
 	}
 
 	@Test
-	void repeated_annotations_are_not_allowed() {
-		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
-				"example.RepeatedAnnotation",
-				SourceFiles.REPEATED_ANNOTATION
-		));
+	void repeated_annotations_are_not_allowed() throws IOException {
+		var className = "RepeatedAnnotation";
+		var sourceQualifiedName = "example." + className;
+
+		var compilation = compile(sourceQualifiedName, className);
 		var result = assertThat(compilation);
 
 		result.failed();
@@ -119,21 +139,19 @@ class Compiler_Test {
 
 	@Test
 	void trivial_beans_are_always_valid() throws IOException {
-		var sourceName = "example.TrivialValidClass";
-		var outName = sourceName + "Validator";
-		var compilation = COMPILER.compile(JavaFileObjects.forSourceString(
-				sourceName,
-				SourceFiles.TRIVIAL_VALID_CLASS
-		));
+		var className = "TrivialValidClass";
+		var sourceQualifiedName = "example." + className;
+		var outputName = sourceQualifiedName + "Validator";
+
+		var compilation = compile(sourceQualifiedName, className);
 		var result = assertThat(compilation);
 
-		result.succeededWithoutWarnings();
-		result.generatedSourceFile(outName);
+		result.generatedSourceFile(outputName);
 
 		var output = compilation
-				.generatedSourceFile(outName)
+				.generatedSourceFile(outputName)
 				.get()
 				.getCharContent(false);
-		Assertions.assertTrue(OutputFiles.TRIVIAL_VALID_CLASS.contentEquals(output));
+		assertEquals(outputFileContent(className), output);
 	}
 }

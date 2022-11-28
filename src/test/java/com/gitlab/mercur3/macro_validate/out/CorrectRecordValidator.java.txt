@@ -1,0 +1,38 @@
+package example;
+
+import com.gitlab.mercur3.macro_validate.Validator;
+import java.lang.Override;
+import java.lang.String;
+import java.util.ArrayList;
+
+class CorrectRecordValidator implements Validator<CorrectRecord> {
+	private final CorrectRecord ptr;
+
+	private CorrectRecordValidator(CorrectRecord ptr) {
+		this.ptr = ptr;
+	}
+
+	public static CorrectRecordValidator of(CorrectRecord ptr) {
+		return new CorrectRecordValidator(ptr);
+	}
+
+	@Override
+	public boolean valid() {
+		return this.ptr.num1() >= 100 && this.ptr.num2() >= 100 && this.ptr.num2() <= 0;
+	}
+
+	@Override
+	public ArrayList<String> errors() {
+		var errors = new ArrayList<String>(2);
+		if (!(ptr.num1() >= 100)) {
+			errors.add("Must be >= 100");
+		}
+		if (!(ptr.num2() >= 100)) {
+			errors.add("Must be >= 100");
+		}
+		if (!(ptr.num2() <= 0)) {
+			errors.add("Must be <= 0");
+		}
+		return errors;
+	}
+}

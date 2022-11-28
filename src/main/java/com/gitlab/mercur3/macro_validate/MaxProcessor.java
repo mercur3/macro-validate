@@ -1,12 +1,15 @@
 package com.gitlab.mercur3.macro_validate;
 
-import com.gitlab.mercur3.jrusty.result.ErrorKind;
+import com.gitlab.mercur3.jrusty.result.Empty;
+import com.gitlab.mercur3.jrusty.result.Err;
+import com.gitlab.mercur3.jrusty.result.Ok;
 import com.gitlab.mercur3.jrusty.result.Result;
 import com.gitlab.mercur3.macro_validate.constraints.Max;
 import com.gitlab.mercur3.macro_validate.constraints.Min;
 
 import javax.lang.model.element.Element;
 import java.lang.annotation.Annotation;
+import java.util.Optional;
 
 final class MaxProcessor extends PrimitiveProcessor {
 	public static final Class<Max> MAX_CLASS = Max.class;
@@ -21,9 +24,9 @@ final class MaxProcessor extends PrimitiveProcessor {
 	}
 
 	@Override
-	Result<String, ErrorKind> isUsedCorrectly(Element el, MetaUtils utils) {
+	public Optional<AnnotationProcessorError> isUsedCorrectlyOnPrimitive(Element el, MetaUtils utils) {
 		var res = super.genericIsUsedCorrectly(el, utils);
-		if (res.isErr()) {
+		if (res.isPresent()) {
 			return res;
 		}
 

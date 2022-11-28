@@ -1,7 +1,6 @@
 package com.gitlab.mercur3.macro_validate;
 
 import com.gitlab.mercur3.jrusty.result.Empty;
-import com.gitlab.mercur3.jrusty.result.ErrorKind;
 import com.gitlab.mercur3.jrusty.result.Ok;
 import com.gitlab.mercur3.jrusty.result.Result;
 
@@ -18,7 +17,7 @@ class ParseTree {
 		return new ParseTree(el, utils);
 	}
 
-	public Result<Empty, ErrorKind> generate() {
+	public Result<Empty, AnnotationProcessorError> generate() {
 		var classMembers = element.getEnclosedElements()
 				.stream()
 				.filter(el -> el.getKind() == ElementKind.FIELD)
@@ -26,7 +25,7 @@ class ParseTree {
 		for (var el : classMembers) {
 			for (var processor : processors) {
 				var res = processor.process(tree, el, utils);
-				if (res.isErr() && res.err().get() != ErrorKind.NOT_FOUND) {
+				if (res.isErr() && res.err().get() != AnnotationProcessorError.NOT_FOUND) {
 					return res;
 				}
 			}

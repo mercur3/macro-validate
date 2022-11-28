@@ -1,3 +1,6 @@
+#+HTML: <a href="https://gitlab.com/mercur3/macro-validate"><img src="https://img.shields.io/azure-devops/coverage/andrireveli/Macro%20Validate/7/master"></a>
+#+HTML: <a href="https://gitlab.com/mercur3/macro-validate"><img src="https://dev.azure.com/andrireveli/Macro%20Validate/_apis/build/status/mercur3.macro-validate?branchName=master"></a>
+
 * macro-validate
 
 A =Java= library that performs bean validation similar to =javax.validation=, but rather than

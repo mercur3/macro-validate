@@ -1,9 +1,5 @@
 package com.gitlab.mercur3.macro_validate;
 
-import com.gitlab.mercur3.jrusty.result.Empty;
-import com.gitlab.mercur3.jrusty.result.Err;
-import com.gitlab.mercur3.jrusty.result.Ok;
-import com.gitlab.mercur3.jrusty.result.Result;
 import com.gitlab.mercur3.macro_validate.constraints.Max;
 import com.gitlab.mercur3.macro_validate.constraints.Min;
 

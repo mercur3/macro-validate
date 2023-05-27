@@ -8,7 +8,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
-@AutoService(Processor.class)
+@AutoService(Compiler.class)
 class Compiler extends AbstractProcessor {
 	private MetaUtils utils;
 

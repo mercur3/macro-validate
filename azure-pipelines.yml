@@ -34,11 +34,11 @@ stages:
               reportDirectory: $(System.DefaultWorkingDirectory)/target/site/jacoco
               #additionalCodeCoverageFiles: # Optional
               failIfCoverageEmpty: true
-      - job: amazon_corretto_17
+      - job: maven_3_amazoncorretto_17
         displayName: Amazon Corretto
         steps:
           - script: |
-              sed "s/__version__/amazoncorretto:17/" -i Dockerfile.amazoncorretto
+              sed "s/__version__/maven:3-amazoncorretto-17/" -i Dockerfile.amazoncorretto
               docker build -t project -f Dockerfile.amazoncorretto .
             displayName: Build custom amazoncorreto image for Azure Pipelines
           - script: docker run project bash -c "cd /opt/project && ./mvnw test -T $(nproc)"

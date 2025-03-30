@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>com.gitlab.mercur3</groupId>
 			<artifactId>jrusty</artifactId>
-			<version>1.2.0</version>
+			<version>1.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.squareup</groupId>

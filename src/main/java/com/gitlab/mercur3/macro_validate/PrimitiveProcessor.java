@@ -1,6 +1,9 @@
 package com.gitlab.mercur3.macro_validate;
 
-import com.gitlab.mercur3.jrusty.result.*;
+import io.github.mercur3.jrusty.result.Empty;
+import io.github.mercur3.jrusty.result.Err;
+import io.github.mercur3.jrusty.result.Ok;
+import io.github.mercur3.jrusty.result.Result;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;

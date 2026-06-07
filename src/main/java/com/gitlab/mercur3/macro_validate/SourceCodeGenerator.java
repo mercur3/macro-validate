@@ -1,9 +1,9 @@
 package com.gitlab.mercur3.macro_validate;
 
-import com.gitlab.mercur3.jrusty.result.Empty;
-import com.gitlab.mercur3.jrusty.result.Err;
-import com.gitlab.mercur3.jrusty.result.Ok;
-import com.gitlab.mercur3.jrusty.result.Result;
+import io.github.mercur3.jrusty.result.Empty;
+import io.github.mercur3.jrusty.result.Err;
+import io.github.mercur3.jrusty.result.Ok;
+import io.github.mercur3.jrusty.result.Result;
 import com.squareup.javapoet.*;
 
 import javax.lang.model.element.Element;

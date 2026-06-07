@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class Compiler_Test {
 	private static final String ANNOTATION_TYPE_NOT_APPLICABLE_ERROR_MSG =
-			"Annotation type not applicable to this kind of declaration";
+			"Annotation interface not applicable to this kind of declaration";
 	private static final String USAGE_OF_MIN_MAX =
 			"Usage of Min.class in combination with Max.class.";
 	private static final Path BASE_PATH = Path.of("src/test/java/com/gitlab/mercur3/macro_validate");
@@ -134,7 +134,7 @@ class Compiler_Test {
 		var result = assertThat(compilation);
 
 		result.failed();
-		result.hadErrorContaining("Min is not a repeatable annotation type");
+		result.hadErrorContaining("Min is not a repeatable annotation interface");
 	}
 
 	@Test

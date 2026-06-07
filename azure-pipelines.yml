@@ -15,10 +15,10 @@ stages:
     jobs:
       - job: test_ubuntu
         displayName: Eclipse Temurin
-        container: eclipse-temurin:17-jdk-focal
+        container: eclipse-temurin:25-noble
         steps:
-          - script: ./mvnw test -T $(nproc)
-            displayName: ./mvnw test -T $(nproc)
+          - script: ./mvnw test -T $(nproc) -ntp
+            displayName: ./mvnw test -T $(nproc) -ntp
           - task: UseDotNet@2
             displayName: "Use .NET Core sdk"
             condition: not(eq(variables['Build.Reason'], 'PullRequest'))
@@ -34,13 +34,13 @@ stages:
               reportDirectory: $(System.DefaultWorkingDirectory)/target/site/jacoco
               #additionalCodeCoverageFiles: # Optional
               failIfCoverageEmpty: true
-      - job: maven_3_amazoncorretto_17
+      - job: maven_3_amazoncorretto_25
         displayName: Amazon Corretto
         steps:
           - script: |
-              sed "s/__version__/maven:3-amazoncorretto-17/" -i Dockerfile.amazoncorretto
+              sed "s/__version__/maven:3-amazoncorretto-25/" -i Dockerfile.amazoncorretto
               docker build -t project -f Dockerfile.amazoncorretto .
             displayName: Build custom amazoncorreto image for Azure Pipelines
-          - script: docker run project bash -c "cd /opt/project && ./mvnw test -T $(nproc)"
-            displayName: docker run project bash -c "cd /opt/project && ./mvnw test -T $(nproc)"
+          - script: docker run project bash -c "cd /opt/project && mvn test -T $(nproc) -ntp"
+            displayName: docker run project bash -c "cd /opt/project && mvn test -T $(nproc) -ntp"
 

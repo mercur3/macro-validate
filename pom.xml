@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>com.gitlab.mercur3</groupId>
 			<artifactId>jrusty</artifactId>
-			<version>1.2.0</version>
+			<version>1.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.squareup</groupId>
@@ -75,8 +75,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.15.0</version>
 				<configuration>
-					<source>17</source>
-					<target>17</target>
+					<source>25</source>
+					<target>25</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>

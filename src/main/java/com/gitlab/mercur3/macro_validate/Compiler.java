@@ -23,7 +23,7 @@ class Compiler extends AbstractProcessor {
 
 	@Override
 	public SourceVersion getSupportedSourceVersion() {
-		return SourceVersion.RELEASE_17;
+		return SourceVersion.RELEASE_25;
 	}
 
 	@Override

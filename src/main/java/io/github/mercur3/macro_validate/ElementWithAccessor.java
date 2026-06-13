@@ -2,15 +2,7 @@ package io.github.mercur3.macro_validate;
 
 import javax.lang.model.element.Element;
 
-class ElementWithAccessor {
-	public final Element element;
-	public final String accessor;
-
-	public ElementWithAccessor(Element element, String accessor) {
-		this.element = element;
-		this.accessor = accessor;
-	}
-
+record ElementWithAccessor(Element element, String accessor) {
 	public static String publicField(Element el) {
 		return String.format(".%s", el.getSimpleName());
 	}

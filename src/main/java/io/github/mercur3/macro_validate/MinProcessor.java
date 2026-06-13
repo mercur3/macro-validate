@@ -1,16 +1,14 @@
 package io.github.mercur3.macro_validate;
 
 import io.github.mercur3.macro_validate.constraints.Min;
+import lombok.NoArgsConstructor;
 
 import javax.lang.model.element.Element;
 import java.lang.annotation.Annotation;
 
+@NoArgsConstructor
 final class MinProcessor extends PrimitiveProcessor {
 	private static final Class<Min> MIN_CLASS = Min.class;
-
-	MinProcessor() {
-		super();
-	}
 
 	@Override
 	public Class<? extends Annotation> getKind() {

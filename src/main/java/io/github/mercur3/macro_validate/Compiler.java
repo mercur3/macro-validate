@@ -2,19 +2,18 @@ package io.github.mercur3.macro_validate;
 
 import io.github.mercur3.macro_validate.constraints.Valid;
 import com.google.auto.service.AutoService;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 @AutoService(Compiler.class)
 class Compiler extends AbstractProcessor {
 	private MetaUtils utils;
-
-	public Compiler() {
-		super();
-	}
 
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {

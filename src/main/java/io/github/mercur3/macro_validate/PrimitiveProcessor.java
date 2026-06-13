@@ -4,6 +4,8 @@ import io.github.mercur3.jrusty.result.Empty;
 import io.github.mercur3.jrusty.result.Err;
 import io.github.mercur3.jrusty.result.Ok;
 import io.github.mercur3.jrusty.result.Result;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
@@ -11,6 +13,7 @@ import java.lang.annotation.Annotation;
 import java.util.Optional;
 import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 abstract sealed class PrimitiveProcessor implements Processor
 	permits MinProcessor, MaxProcessor
 {
@@ -20,8 +23,6 @@ abstract sealed class PrimitiveProcessor implements Processor
 			TypeKind.INT,
 			TypeKind.LONG
 	);
-
-	PrimitiveProcessor() {}
 
 	public abstract Class<? extends Annotation> getKind();
 

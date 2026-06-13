@@ -2,17 +2,16 @@ package io.github.mercur3.macro_validate;
 
 import io.github.mercur3.macro_validate.constraints.Max;
 import io.github.mercur3.macro_validate.constraints.Min;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.lang.model.element.Element;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 final class MaxProcessor extends PrimitiveProcessor {
 	public static final Class<Max> MAX_CLASS = Max.class;
-
-	MaxProcessor() {
-		super();
-	}
 
 	@Override
 	public Class<? extends Annotation> getKind() {

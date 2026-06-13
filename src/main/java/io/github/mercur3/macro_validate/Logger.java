@@ -1,9 +1,13 @@
 package io.github.mercur3.macro_validate;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 class Logger {
 	private final Messager messager;
 
@@ -25,11 +29,5 @@ class Logger {
 
 	public void error(String msg, Element el) {
 		messager.printMessage(Diagnostic.Kind.ERROR, msg, el);
-	}
-
-	/// PRIVATE
-
-	private Logger(Messager messager) {
-		this.messager = messager;
 	}
 }

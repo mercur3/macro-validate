@@ -5,6 +5,8 @@ import io.github.mercur3.jrusty.result.Err;
 import io.github.mercur3.jrusty.result.Ok;
 import io.github.mercur3.jrusty.result.Result;
 import com.squareup.javapoet.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 class SourceCodeGenerator {
 	private final ParseTree parseTree;
 	private final MetaUtils utils;
@@ -71,14 +74,8 @@ class SourceCodeGenerator {
 
 	/// PRIVATE
 
-
-	private SourceCodeGenerator(ParseTree parseTree, MetaUtils utils) {
-		this.parseTree = parseTree;
-		this.utils = utils;
-	}
-
 	private String generateName(Element el) {
-		return el.getSimpleName().toString() + "Validator";
+		return el.getSimpleName() + "Validator";
 	}
 
 	private String generatePackage(Element el) {
@@ -96,7 +93,7 @@ class SourceCodeGenerator {
 
 		StringBuilder acc = new StringBuilder("return ");
 		var entries = parseTree.tree.nodes.entrySet();
-		if (entries.size() == 0) {
+		if (entries.isEmpty()) {
 			acc.append("true");
 		}
 		else {
@@ -118,14 +115,14 @@ class SourceCodeGenerator {
 			Map.Entry<ElementWithAccessor, ArrayList<Constraint>> field
 	) {
 		acc.append("this.ptr");
-		acc.append(field.getKey().accessor);
+		acc.append(field.getKey().accessor());
 		acc.append(' ');
 		var constraints = field.getValue();
 		acc.append(constraints.get(0).statement());
 		for (int i = 1; i < constraints.size(); ++i) {
 			acc.append(" && ");
 			acc.append("this.ptr");
-			acc.append(field.getKey().accessor);
+			acc.append(field.getKey().accessor());
 			acc.append(' ');
 			acc.append(constraints.get(i).statement());
 		}
@@ -142,7 +139,7 @@ class SourceCodeGenerator {
 						entries.size())
 				);
 		for (var el : entries) {
-			var accessor = el.getKey().accessor;
+			var accessor = el.getKey().accessor();
 			for (var constraint : el.getValue()) {
 				builder = builder.beginControlFlow(
 						"if (!(ptr$N $N))",
